@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+use app\Models\Paket;
+use Illuminate\Database\Eloquent\Model;
+
+class Paket extends Model
+{
+    protected $table = 'paket';
+
+    protected $fillable = [
+        'nama_paket',
+        'harga',
+        'deskripsi',
+        'gambar'
+    ];
+}
