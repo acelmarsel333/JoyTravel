@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -107,7 +108,7 @@
                 @auth
                     @if(auth()->user()->peran === 'admin')
                         <li class="nav-item ms-lg-3">
-                            <a href="{{ route('admin.paket.index') }}"
+                            <a href="{{ route('admin.dashboard') }}"
                                class="btn btn-warning btn-sm fw-semibold px-4">
                                 Dashboard
                             </a>

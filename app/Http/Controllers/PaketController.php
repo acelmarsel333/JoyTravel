@@ -3,95 +3,131 @@
 namespace App\Http\Controllers;
 
 use App\Models\Paket;
+use App\Models\PaketGambar;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class PaketController extends Controller
 {
-    // ================= ADMIN =================
+    public function userIndex()
+    {
+        $paket = Paket::with('galeri')->latest()->get();
+        return view('paket.user', compact('paket'));
+    }
 
+    // ================= LIST =================
     public function index()
     {
-        $paket = Paket::latest()->get();
+        $paket = Paket::with('galeri')->latest()->get();
         return view('admin.paket.index', compact('paket'));
     }
 
+    // ================= CREATE =================
     public function create()
     {
         return view('admin.paket.create');
     }
 
-    public function store(Request $request)
+    // ================= DETAIL =================
+    public function show(Paket $paket)
     {
-        $data = $request->validate([
-            'nama_paket' => 'required|string',
-            'harga'      => 'required|numeric',
-            'deskripsi'  => 'required|string',
-            'gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        if ($request->hasFile('gambar')) {
-            $data['gambar'] = $request->file('gambar')
-                ->store('paket', 'public');
-        }
-
-        Paket::create($data);
-
-        return redirect()->route('admin.paket.index')
-            ->with('success', 'Paket berhasil ditambahkan');
+        $paket->load('galeri');
+        return view('paket.show', compact('paket'));
     }
 
+    // ================= STORE =================
+    public function store(Request $request)
+    {
+        // 🔥 VALIDASI
+        $request->validate([
+            'nama_paket' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'deskripsi' => 'required|string',
+            'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'map_embed.*' => 'nullable|string'
+        ]);
+
+        $paket = Paket::create([
+            'nama_paket' => $request->nama_paket,
+            'harga' => $request->harga,
+            'deskripsi' => $request->deskripsi,
+        ]);
+
+        if ($request->file('gambar')) {
+            foreach ($request->file('gambar') as $i => $file) {
+
+                $path = $file->store('paket', 'public');
+
+                PaketGambar::create([
+                    'paket_id' => $paket->id,
+                    'gambar' => $path,
+                    'map_embed' => $request->map_embed[$i] ?? null
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.paket.index')
+            ->with('success', 'Paket berhasil ditambahkan!');
+    }
+
+    // ================= EDIT =================
     public function edit(Paket $paket)
     {
+        $paket->load('galeri');
         return view('admin.paket.edit', compact('paket'));
     }
 
+    // ================= UPDATE =================
     public function update(Request $request, Paket $paket)
     {
-        $data = $request->validate([
-            'nama_paket' => 'required|string',
-            'harga'      => 'required|numeric',
-            'deskripsi'  => 'required|string',
-            'gambar'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        // 🔥 VALIDASI
+        $request->validate([
+            'nama_paket' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'deskripsi' => 'required|string',
+            'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'map_embed.*' => 'nullable|string'
         ]);
 
-        if ($request->hasFile('gambar')) {
-            if ($paket->gambar) {
-                Storage::disk('public')->delete($paket->gambar);
-            }
+        $paket->update([
+            'nama_paket' => $request->nama_paket,
+            'harga' => $request->harga,
+            'deskripsi' => $request->deskripsi,
+        ]);
 
-            $data['gambar'] = $request->file('gambar')
-                ->store('paket', 'public');
+        // 🔥 UPDATE MAP TANPA UPLOAD GAMBAR
+        if ($request->map_embed) {
+            $firstImage = $paket->galeri()->first();
+
+            if ($firstImage) {
+                $firstImage->update([
+                    'map_embed' => $request->map_embed[0] ?? $firstImage->map_embed
+                ]);
+            }
         }
 
-        $paket->update($data);
+        // 🔥 TAMBAH GAMBAR BARU
+        if ($request->file('gambar')) {
+            foreach ($request->file('gambar') as $i => $file) {
+
+                $path = $file->store('paket', 'public');
+
+                PaketGambar::create([
+                    'paket_id' => $paket->id,
+                    'gambar' => $path,
+                    'map_embed' => $request->map_embed[$i] ?? null
+                ]);
+            }
+        }
 
         return redirect()->route('admin.paket.index')
-            ->with('success', 'Paket berhasil diupdate');
+            ->with('success', 'Paket berhasil diedit!');
     }
 
+    // ================= DELETE =================
     public function destroy(Paket $paket)
     {
-        if ($paket->gambar) {
-            Storage::disk('public')->delete($paket->gambar);
-        }
-
         $paket->delete();
 
-        return redirect()->route('admin.paket.index')
-            ->with('success', 'Paket berhasil dihapus');
-    }
-
-    // ================= USER =================
-
-    public function userIndex()
-    {
-        $paket = Paket::latest()->get();
-        return view('paket.user', compact('paket'));
-    }
-
-    public function show(Paket $paket)
-    {
-        return view('paket.show', compact('paket'));
+        return back()->with('success', 'Paket berhasil dihapus!');
     }
 }

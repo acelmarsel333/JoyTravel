@@ -26,7 +26,7 @@
 
             <a href="{{ route('kontak') }}"
                class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-                Hubungi Kami
+                Kontak Kami
             </a>
         </div>
     </div>

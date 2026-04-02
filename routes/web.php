@@ -7,7 +7,7 @@ use App\Http\Controllers\TestimoniController;
 
 /*
 |--------------------------------------------------------------------------
-| HALAMAN UMUM (GUEST)
+| HALAMAN UMUM
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => view('home'))->name('home');
@@ -17,26 +17,20 @@ Route::get('/kontak', fn () => view('kontak'))->name('kontak');
 
 /*
 |--------------------------------------------------------------------------
-| PAKET (FRONTEND)
+| PAKET
 |--------------------------------------------------------------------------
-| guest | user | admin ➜ boleh lihat
 */
-Route::get('/paket', [PaketController::class, 'userIndex'])
-    ->name('paket.user');
-
-Route::get('/paket/{paket}', [PaketController::class, 'show'])
-    ->name('paket.show');
+Route::get('/paket', [PaketController::class, 'userIndex'])->name('paket.user');
+Route::get('/paket/{paket}', [PaketController::class, 'show'])->name('paket.show');
 
 /*
 |--------------------------------------------------------------------------
-| TESTIMONI
+| TESTIMONI (PUBLIC & USER)
 |--------------------------------------------------------------------------
 */
-// LIHAT TESTIMONI (SEMUA)
 Route::get('/testimoni', [TestimoniController::class, 'index'])
     ->name('testimoni.index');
 
-// USER SAJA
 Route::middleware(['auth', 'user'])->group(function () {
 
     Route::get('/testimoni/create', [TestimoniController::class, 'create'])
@@ -74,7 +68,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ONLY
+| ADMIN
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'admin'])
@@ -82,5 +76,14 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
+        // 🔥 DASHBOARD
+        Route::get('/dashboard', [TestimoniController::class, 'dashboard'])
+            ->name('dashboard');
+
+        // 🔥 PAKET
         Route::resource('paket', PaketController::class);
+
+        // 🔥 TESTIMONI (READ ONLY)
+        Route::get('/testimoni', [TestimoniController::class, 'adminIndex'])
+            ->name('testimoni.index');
     });

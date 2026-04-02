@@ -26,12 +26,12 @@
 
                 <!-- IMAGE -->
                 <div class="position-relative">
-                    @if($p->gambar)
-                        <img src="{{ asset('storage/'.$p->gambar) }}"
-                             class="w-100 paket-img">
+                    @if($p->galeri && $p->galeri->isNotEmpty())
+                        <img src="{{ asset('storage/'.$p->galeri->first()->gambar) }}"
+                            class="w-100 paket-img">
                     @else
                         <img src="https://via.placeholder.com/400x260"
-                             class="w-100 paket-img">
+                            class="w-100 paket-img">
                     @endif
 
                     <!-- OVERLAY -->

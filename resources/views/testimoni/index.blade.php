@@ -9,51 +9,105 @@
         <div>
             <h3 class="fw-bold mb-1">Testimoni Pelanggan</h3>
             <p class="text-muted mb-0">
-                Apa kata mereka tentang JoyTravel
+                Apa kata pelanggan tentang JoyTravel
             </p>
         </div>
 
         @auth
-            @if(auth()->user()->peran === 'user')
+            @if(auth()->user()->peran === 'user' && !$sudahTestimoni)
                 <a href="{{ route('testimoni.create') }}"
-                   class="btn btn-primary fw-semibold rounded-pill px-4">
+                   class="btn btn-primary rounded-pill px-4">
                     + Tambah Testimoni
                 </a>
             @endif
         @endauth
     </div>
 
+    <!-- NOTIFIKASI -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ session('success') }}
+            <button class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-warning alert-dismissible fade show">
+            {{ session('error') }}
+            <button class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @auth
+        @if(auth()->user()->peran === 'user' && $sudahTestimoni && !session('success'))
+            <div class="alert alert-info alert-dismissible fade show">
+                Kamu sudah memberikan testimoni. Terima kasih 🙏
+                <button class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+    @endauth
+
+
+    <!-- ⭐ RATING -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-center">
+
+        <h1 class="fw-bold mb-0">
+            {{ number_format($rataRata, 1) }}
+        </h1>
+
+        @php
+            $full = floor($rataRata);
+            $half = ($rataRata - $full) >= 0.5 ? 1 : 0;
+            $empty = 5 - $full - $half;
+        @endphp
+
+        <div class="text-warning fs-4 mb-2">
+            @for($i = 0; $i < $full; $i++)
+                <i class="bi bi-star-fill"></i>
+            @endfor
+
+            @if($half)
+                <i class="bi bi-star-half"></i>
+            @endif
+
+            @for($i = 0; $i < $empty; $i++)
+                <i class="bi bi-star"></i>
+            @endfor
+        </div>
+
+        <p class="text-muted mb-0">
+            dari {{ $jumlahUser }} ulasan
+        </p>
+    </div>
+
     <!-- LIST TESTIMONI -->
     <div class="row g-4">
-
         @foreach($testimoni as $t)
         <div class="col-md-4">
             <div class="card h-100 border-0 shadow-sm rounded-4">
-
                 <div class="card-body p-4 d-flex flex-column">
 
-                    <!-- NAMA -->
-                    <h6 class="fw-bold mb-1">{{ $t->nama }}</h6>
+                    <h6 class="fw-bold">{{ $t->nama }}</h6>
 
-                    <!-- RATING -->
+                    <!-- BINTANG PER USER -->
                     <div class="text-warning mb-2">
-                        {{ str_repeat('⭐', $t->rating) }}
+                        @for($i = 0; $i < $t->rating; $i++)
+                            <i class="bi bi-star-fill"></i>
+                        @endfor
                     </div>
 
-                    <!-- ISI -->
                     <p class="text-muted flex-grow-1">
                         “{{ $t->isi }}”
                     </p>
 
-                    <!-- AKSI -->
                     @auth
-                        @if(auth()->user()->peran === 'user' && auth()->id() === $t->user_id)
+                        @if(auth()->id() === $t->user_id)
                             <form action="{{ route('testimoni.destroy', $t->id) }}"
                                   method="POST"
-                                  onsubmit="return confirm('Hapus testimoni ini?')">
+                                  onsubmit="return confirm('Yakin ingin menghapus testimoni ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                <button class="btn btn-outline-danger btn-sm rounded-pill">
                                     Hapus
                                 </button>
                             </form>
@@ -64,7 +118,6 @@
             </div>
         </div>
         @endforeach
-
     </div>
 
 </div>
