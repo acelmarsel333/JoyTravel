@@ -8,13 +8,14 @@ use Illuminate\Http\Request;
 
 class PaketController extends Controller
 {
+    // ================= USER LIST =================
     public function userIndex()
     {
         $paket = Paket::with('galeri')->latest()->get();
         return view('paket.user', compact('paket'));
     }
 
-    // ================= LIST =================
+    // ================= ADMIN LIST =================
     public function index()
     {
         $paket = Paket::with('galeri')->latest()->get();
@@ -37,13 +38,20 @@ class PaketController extends Controller
     // ================= STORE =================
     public function store(Request $request)
     {
-        // 🔥 VALIDASI
         $request->validate([
             'nama_paket' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
             'deskripsi' => 'required|string',
-            'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'map_embed.*' => 'nullable|string'
+
+            // 🔥 VALIDASI GAMBAR
+            'gambar' => 'nullable|array',
+            'gambar.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'gambar' => 'required|array|min:1',
+
+
+            // 🔥 VALIDASI MAP
+            'map_embed' => 'nullable|array',
+            'map_embed.*' => 'nullable|string|max:5000',
         ]);
 
         $paket = Paket::create([
@@ -52,7 +60,8 @@ class PaketController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        if ($request->file('gambar')) {
+        // 🔥 SIMPAN GAMBAR + MAP
+        if ($request->hasFile('gambar')) {
             foreach ($request->file('gambar') as $i => $file) {
 
                 $path = $file->store('paket', 'public');
@@ -79,13 +88,16 @@ class PaketController extends Controller
     // ================= UPDATE =================
     public function update(Request $request, Paket $paket)
     {
-        // 🔥 VALIDASI
         $request->validate([
             'nama_paket' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
             'deskripsi' => 'required|string',
-            'gambar.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'map_embed.*' => 'nullable|string'
+
+            'gambar' => 'nullable|array',
+            'gambar.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+
+            'map_embed' => 'nullable|array',
+            'map_embed.*' => 'nullable|string|max:5000',
         ]);
 
         $paket->update([
@@ -94,19 +106,17 @@ class PaketController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        // 🔥 UPDATE MAP TANPA UPLOAD GAMBAR
+        // 🔥 UPDATE MAP EMBED UNTUK SEMUA GALERI
         if ($request->map_embed) {
-            $firstImage = $paket->galeri()->first();
-
-            if ($firstImage) {
-                $firstImage->update([
-                    'map_embed' => $request->map_embed[0] ?? $firstImage->map_embed
+            foreach ($paket->galeri as $i => $gambar) {
+                $gambar->update([
+                    'map_embed' => $request->map_embed[$i] ?? $gambar->map_embed
                 ]);
             }
         }
 
         // 🔥 TAMBAH GAMBAR BARU
-        if ($request->file('gambar')) {
+        if ($request->hasFile('gambar')) {
             foreach ($request->file('gambar') as $i => $file) {
 
                 $path = $file->store('paket', 'public');
@@ -126,6 +136,12 @@ class PaketController extends Controller
     // ================= DELETE =================
     public function destroy(Paket $paket)
     {
+        // 🔥 OPTIONAL: hapus semua gambar juga
+        foreach ($paket->galeri as $galeri) {
+            // Storage::delete('public/' . $galeri->gambar); // aktifkan kalau mau hapus file juga
+            $galeri->delete();
+        }
+
         $paket->delete();
 
         return back()->with('success', 'Paket berhasil dihapus!');
