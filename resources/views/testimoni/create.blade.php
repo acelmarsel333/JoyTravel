@@ -26,7 +26,7 @@
     <div class="mb-3">
         <label>Rating</label>
         <select name="rating" class="form-control" required>
-            <option value="">-- Pilih Rating --</option>
+            <option value="" disabled selected>-- Pilih Rating --</option>
             <option value="5" {{ old('rating') == 5 ? 'selected' : '' }}>⭐⭐⭐⭐⭐ (Sangat Baik)</option>
             <option value="4" {{ old('rating') == 4 ? 'selected' : '' }}>⭐⭐⭐⭐ (Baik)</option>
             <option value="3" {{ old('rating') == 3 ? 'selected' : '' }}>⭐⭐⭐ (Cukup)</option>

@@ -1,170 +1,194 @@
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <title>Admin Panel | JoyTravel</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>JoyTravel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- BOOTSTRAP -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- ICON -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
 
-        <style>
-            body {
-                background-color: #f1f5f9;
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        /* NAVBAR SERAGAM */
+        .navbar-joy {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            padding: 12px 0;
+
+            /* WARNA FIX */
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+
+            /* EFFECT PREMIUM */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* LOGO */
+        .navbar-brand img {
+            height: 40px;
+            transition: .3s;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.1);
+        }
+
+        /* TEXT MENU */
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            padding: .5rem 1rem;
+            border-radius: .6rem;
+            transition: all .25s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ACTIVE */
+        .nav-link.active {
+            background: linear-gradient(135deg, #facc15, #fde047);
+            color: #1e293b !important;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(250, 204, 21, 0.5);
+        }
+
+        /* BUTTON */
+        .btn-outline-light,
+        .btn-light,
+        .btn-warning,
+        .btn-danger {
+            border-radius: 999px;
+            transition: all .3s ease;
+        }
+
+        .btn-outline-light {
+            border: 1px solid rgba(255,255,255,0.7);
+            color: #fff;
+        }
+
+        .btn-outline-light:hover {
+            background: #fff;
+            color: #1e3a8a;
+        }
+
+        .btn-light {
+            background: #fff;
+            color: #1e3a8a;
+        }
+
+        .btn-light:hover {
+            background: #facc15;
+            color: #1e293b;
+        }
+
+        .btn-warning:hover,
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+
+        /* MOBILE */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: linear-gradient(135deg, #2563eb, #1e3a8a);
+                padding: 15px;
+                border-radius: 12px;
+                margin-top: 10px;
             }
+        }
+    </style>
+</head>
 
-            /* NAVBAR */
-            .navbar-admin {
-                background: linear-gradient(90deg, #1e3a8a, #2563eb);
-            }
+<body>
 
-            .navbar-brand span {
-                font-size: .75rem;
-                letter-spacing: .5px;
-            }
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-joy">
+    <div class="container">
 
-            .nav-link {
-                color: #e5e7eb !important;
-                font-weight: 500;
-                padding: .55rem 1rem;
-                border-radius: .6rem;
-                transition: all .2s ease;
-            }
+        <!-- LOGO -->
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold"
+           href="{{ route('home') }}">
+            <img src="{{ asset('image/logo icon.png') }}" alt="Logo">
+        </a>
 
-            .nav-link:hover {
-                background-color: rgba(255,255,255,.15);
-                color: #fff !important;
-            }
+        <!-- TOGGLER -->
+        <button class="navbar-toggler border-0"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            .nav-link.active {
-                background-color: #facc15;
-                color: #1e293b !important;
-                font-weight: 600;
-            }
+        <!-- MENU -->
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 mt-3 mt-lg-0">
+                
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                       href="{{ route('admin.dashboard') }}">Dashboard</a>
+                </li>
 
-            /* PAGE HEADER */
-            .page-header {
-                background: linear-gradient(180deg, #ffffff, #f8fafc);
-                border-radius: 1rem;
-                padding: 1.5rem 2rem;
-                box-shadow: 0 6px 18px rgba(0,0,0,.05);
-            }
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.paket.index') ? 'active' : '' }}"
+                       href="{{ route('admin.paket.index') }}">Paket</a>
+                </li>
 
-            .page-title {
-                font-weight: 700;
-                color: #0f172a;
-            }
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.testimoni.index') ? 'active' : '' }}"
+                       href="{{ route('admin.testimoni.index') }}">Testimoni</a>
+                </li>
 
-            .page-subtitle {
-                color: #64748b;
-                font-size: .95rem;
-            }
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                       href="{{ route('home') }}">Website</a>
+                </li>
+                
 
-            /* CARD */
-            .admin-card {
-                background: #ffffff;
-                border-radius: 1rem;
-                box-shadow: 0 10px 30px rgba(0,0,0,.06);
-            }
-        </style>
-    </head>
-
-    <body>
-
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-admin shadow-sm">
-        <div class="container-fluid px-4">
-
-            <!-- BRAND -->
-            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold"
-            href="{{ route('admin.paket.index') }}">
-                <span class="bg-white text-primary rounded-3 px-2 py-1 fw-bold">
-                    ADMIN
-                </span>
-                JoyTravel
-            </a>
-
-            <!-- TOGGLER -->
-            <button class="navbar-toggler border-0"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#adminNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- MENU -->
-            <div class="collapse navbar-collapse" id="adminNavbar">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2 mt-3 mt-lg-0">
-
-                    <!-- WEBSITE -->
-                    <li class="nav-item">
-                        <a href="{{ route('home') }}" class="nav-link">
-                            <i class="bi bi-globe me-1"></i> Website
-                        </a>
-                    </li>
-
-                    <!-- DASHBOARD -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.dashboard') }}"
-                        class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}">
-                            <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                        </a>
-                    </li>
-
-                    <!-- PAKET -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.paket.index') }}"
-                        class="nav-link {{ request()->is('admin/paket*') ? 'active' : '' }}">
-                            <i class="bi bi-box-seam me-1"></i> Paket
-                        </a>
-                    </li>
-
-                    <!-- TESTIMONI -->
-                    <li class="nav-item">
-                        <a href="{{ route('admin.testimoni.index') }}"
-                        class="nav-link {{ request()->is('admin/testimoni*') ? 'active' : '' }}">
-                            <i class="bi bi-chat-left-quote me-1"></i> Testimoni
-                        </a>
-                    </li>
-
-                    <!-- LOGOUT -->
+                <!-- GUEST -->
+                @guest
                     <li class="nav-item ms-lg-3">
+                        <a class="btn btn-outline-light btn-sm px-4"
+                           href="{{ route('login') }}">Login</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-light btn-sm px-4"
+                           href="{{ route('register') }}">Register</a>
+                    </li>
+                @endguest
+
+                <!-- AUTH -->
+                @auth
+                    <li class="nav-item ms-2">
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
-                            <button class="btn btn-outline-light btn-sm px-4 fw-semibold">
-                                <i class="bi bi-box-arrow-right me-1"></i> Logout
+                            <button class="btn btn-danger btn-sm px-4">
+                                Logout
                             </button>
                         </form>
                     </li>
-                </ul>
-            </div>
+                @endauth
+
+            </ul>
         </div>
-    </nav>
-
-    <!-- CONTENT -->
-    <div class="container my-5">
-
-        <!-- PAGE HEADER -->
-        <div class="page-header mb-4">
-            <h4 class="page-title mb-1">
-                Dashboard Admin
-            </h4>
-            <p class="page-subtitle mb-0">
-                Kelola konten dan data JoyTravel dengan mudah & aman
-            </p>
-        </div>
-
-        <!-- CONTENT SLOT -->
-        <div class="admin-card p-4">
-            @yield('content')
-        </div>
-
     </div>
+</nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
+<!-- CONTENT -->
+<div class="container my-5">
+    @yield('content')
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

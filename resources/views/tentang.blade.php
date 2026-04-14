@@ -10,7 +10,7 @@
             Tentang Kami
         </span>
         <h1 class="fw-bold mb-2">
-            Tentang <span class="text-primary">JoyTravel</span>
+            Tentang <img src="{{ asset('image/logo panjang 2.png') }}" alt="JoyTravel" width="150px" height="50px">
         </h1>
         <p class="text-muted mx-auto fs-5" style="max-width:640px;">
             Partner perjalanan wisata Anda yang aman, nyaman, dan terpercaya

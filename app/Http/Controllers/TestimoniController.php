@@ -48,11 +48,11 @@ class TestimoniController extends Controller
     {
         // 🔥 VALIDASI (FULL INDONESIA)
         $request->validate([
-            'isi' => 'required|string|min:10|max:500',
+            'isi' => 'required|string|min:5|max:500',
             'rating' => 'required|integer|min:1|max:5'
         ], [
             'isi.required' => 'Isi testimoni wajib diisi.',
-            'isi.min' => 'Isi testimoni minimal 10 karakter.',
+            'isi.min' => 'Isi testimoni minimal 5 karakter.',
             'isi.max' => 'Isi testimoni maksimal 500 karakter.',
             'rating.required' => 'Rating wajib dipilih.',
             'rating.min' => 'Rating minimal 1 bintang.',

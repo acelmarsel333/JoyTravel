@@ -10,7 +10,7 @@
         </span>
 
         <h1 class="fw-bold display-5 mb-3">
-            Jelajahi Indonesia Bersama <span class="text-primary">JoyTravel</span>
+            Jelajahi Indonesia Bersama<span class="text-primary"><img src="{{ asset('image/logo panjang 2.png') }}" alt="JoyTravel" width="175" height="60px"></span>
         </h1>
 
         <p class="lead text-muted mb-4">
@@ -32,7 +32,7 @@
     </div>
 
     <div class="col-md-6 text-center">
-        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee" class="img-fluid rounded-4 shadow mx-auto d-block"
+        <img src="{{ asset('image/npenida.webp') }}" class="img-fluid rounded-4 shadow mx-auto d-block"
         style="max-width: 400px;" alt="Travel JoyTravel">
     </div>
 </div>

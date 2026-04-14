@@ -6,7 +6,7 @@
 <section class="py-5 mb-5 text-white hero-travel">
     <div class="container text-center">
         <h1 class="fw-bold display-6 mb-3">
-            Jelajahi Indonesia Bersama JoyTravel ✈️
+            Jelajahi Indonesia Bersama <img src="{{ asset('image/logo panjang 2.png') }}" alt="JoyTravel" width="200" height="60px">
         </h1>
         <p class="lead mb-0">
             Paket perjalanan terbaik, nyaman & terpercaya
