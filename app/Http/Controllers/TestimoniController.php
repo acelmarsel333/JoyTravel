@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Paket;
 use App\Models\Testimoni;
 use Illuminate\Http\Request;
@@ -8,12 +9,69 @@ use Illuminate\Support\Facades\Auth;
 
 class TestimoniController extends Controller
 {
+    // 🔥 LIST KATA TERLARANG (bisa kamu tambah sendiri)
+    private $badWords = [
+        // 🔥 kasar umum
+        'anjing','anjg','anj','ajg',
+        'bangsat','bgsd','bgst',
+        'kontol','kntl','kntol','kontl',
+        'memek','mmk','mmek',
+        'tai','taik',
+        'babi','babi lu',
+        'tolol','tlol','tll',
+        'goblok','goblog','gblk','gblg',
+        'brengsek','brngsk',
+        'asu',
+        'kampret','kampret lu',
+        'ngentod','ngentot','ngntd',
+        'jancok','jancuk','jncok',
+        'bajingan','bjingan',
+        'sialan','sial',
+        'bacot','bct',
+        'gila lu','gila banget',
+
+        // 🔥 kata sensitif / vulgar
+        'sundal','pelacur','lonte','perek',
+        'puki','pukimak','pantek','pntk',
+        'titit','ttit','ttid',
+        'kont*l','mem*k',
+
+        // 🔥 singkatan & alay
+        'k0ntol','m3mek','4njing','b4ngsat',
+        'g0bl0k','t0l0l',
+
+        // 🔥 tambahan umum
+        'idiot','bodoh','dungu',
+    ];
+
+
+    // 🔥 FUNCTION CEK KATA KASAR
+    private function containsBadWords($text)
+    {
+        // hilangkan spasi & simbol
+        $cleanText = strtolower(preg_replace('/[^a-z0-9]/', '', $text));
+
+        foreach ($this->badWords as $word) {
+            $cleanWord = preg_replace('/[^a-z0-9]/', '', $word);
+
+            if (str_contains($cleanText, $cleanWord)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
     // ================= INDEX =================
     public function index()
     {
-        $testimoni = Testimoni::with('user')->when(Auth::check(), function ($query) {
-        $query->orderByRaw('user_id = ? DESC', [Auth::id()]);})->latest()->get();
-
+        $testimoni = Testimoni::with('user')
+            ->when(Auth::check(), function ($query) {
+                $query->orderByRaw('user_id = ? DESC', [Auth::id()]);
+            })
+            ->latest()
+            ->get();
 
         $sudahTestimoni = false;
 
@@ -21,7 +79,6 @@ class TestimoniController extends Controller
             $sudahTestimoni = Testimoni::where('user_id', Auth::id())->exists();
         }
 
-        // 🔥 RATA-RATA & JUMLAH
         $rataRata = Testimoni::avg('rating') ?? 0;
         $jumlahUser = Testimoni::count();
 
@@ -46,7 +103,6 @@ class TestimoniController extends Controller
     // ================= STORE =================
     public function store(Request $request)
     {
-        // 🔥 VALIDASI (FULL INDONESIA)
         $request->validate([
             'isi' => 'required|string|min:5|max:500',
             'rating' => 'required|integer|min:1|max:5'
@@ -67,6 +123,13 @@ class TestimoniController extends Controller
         if (Testimoni::where('user_id', Auth::id())->exists()) {
             return redirect()->route('testimoni.index')
                 ->with('error', 'Kamu sudah pernah memberikan testimoni.');
+        }
+
+        // 🔥 CEK KATA KASAR
+        if ($this->containsBadWords($request->isi)) {
+            return back()->withErrors([
+                'isi' => 'Dimohon untuk tidak menggunakan kata-kata kasar ya'
+            ])->withInput();
         }
 
         Testimoni::create([
@@ -106,6 +169,13 @@ class TestimoniController extends Controller
             'rating.required' => 'Rating wajib dipilih.',
         ]);
 
+        // 🔥 CEK KATA KASAR
+        if ($this->containsBadWords($request->isi)) {
+            return back()->withErrors([
+                'isi' => 'Gunakan bahasa yang sopan ya 🙂'
+            ])->withInput();
+        }
+
         $testimoni->update([
             'isi' => $request->isi,
             'rating' => $request->rating
@@ -115,29 +185,27 @@ class TestimoniController extends Controller
             ->with('success', 'Testimoni berhasil diperbarui.');
     }
 
+    // ================= ADMIN DASHBOARD =================
+    public function dashboard()
+    {
+        $totalPaket = Paket::count();
+        $totalTestimoni = Testimoni::count();
+        $rataRata = Testimoni::avg('rating') ?? 0;
 
-// ================= ADMIN DASHBOARD =================
-public function dashboard()
-{
-    $totalPaket = Paket::count();
-    $totalTestimoni = Testimoni::count();
-    $rataRata = Testimoni::avg('rating') ?? 0;
+        return view('admin.dashboard', compact(
+            'totalPaket',
+            'totalTestimoni',
+            'rataRata'
+        ));
+    }
 
-    return view('admin.dashboard', compact(
-        'totalPaket',
-        'totalTestimoni',
-        'rataRata'
-    ));
-}
+    // ================= ADMIN TESTIMONI =================
+    public function adminIndex()
+    {
+        $testimoni = Testimoni::latest()->get();
 
-// ================= ADMIN TESTIMONI =================
-public function adminIndex()
-{
-    $testimoni = Testimoni::latest()->get();
-
-    return view('admin.testimoni.index', compact('testimoni'));
-}
-
+        return view('admin.testimoni.index', compact('testimoni'));
+    }
 
     // ================= DELETE =================
     public function destroy(Testimoni $testimoni)

@@ -9,7 +9,7 @@
         <div>
             <h3 class="fw-bold mb-1">Testimoni Pelanggan</h3>
             <p class="text-muted mb-0">
-                Apa kata pelanggan tentang JoyTravel
+                Apa kata pelanggan tentang <img src="{{ asset('image/logo panjang 2.png') }}" alt="JoyTravel" width="60" height="20px">
             </p>
         </div>
 

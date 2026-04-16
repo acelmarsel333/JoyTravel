@@ -25,7 +25,7 @@
                 <div class="card-body p-4 p-md-5">
 
                     <p class="fs-5 text-dark">
-                        <strong>JoyTravel</strong> adalah perusahaan travel yang bergerak
+                        <strong><img src="{{ asset('image/logo panjang 2.png') }}" alt="JoyTravel" width="75" height="30px"></strong> adalah perusahaan travel yang bergerak
                         di bidang jasa perjalanan wisata domestik di Indonesia.
                         Kami berkomitmen memberikan pelayanan terbaik
                         dengan mengutamakan <strong>keamanan</strong> dan

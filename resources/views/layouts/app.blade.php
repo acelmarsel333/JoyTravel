@@ -166,6 +166,8 @@
                        href="{{ route('kontak') }}">Kontak</a>
                 </li>
 
+                &nbsp;&nbsp;
+
                 <!-- GUEST -->
                 @guest
                     <li class="nav-item ms-lg-3">

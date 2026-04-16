@@ -42,17 +42,13 @@ class PaketController extends Controller
             'nama_paket' => 'required|string|max:255',
             'harga' => 'required|numeric|min:0',
             'deskripsi' => 'required|string',
-
-            // 🔥 VALIDASI GAMBAR
-            'gambar' => 'nullable|array',
-            'gambar.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            
             'gambar' => 'required|array|min:1',
 
-
-            // 🔥 VALIDASI MAP
             'map_embed' => 'nullable|array',
             'map_embed.*' => 'nullable|string|max:5000',
         ]);
+
 
         $paket = Paket::create([
             'nama_paket' => $request->nama_paket,
@@ -62,7 +58,19 @@ class PaketController extends Controller
 
         // 🔥 SIMPAN GAMBAR + MAP
         if ($request->hasFile('gambar')) {
+
             foreach ($request->file('gambar') as $i => $file) {
+
+                if (!$file) continue;
+                if (!$file->isValid()) continue;
+
+                // 🔥 VALIDASI MANUAL
+                $ext = strtolower($file->getClientOriginalExtension());
+                if (!in_array($ext, ['jpg', 'jpeg', 'png'])) {
+                    return back()
+                        ->withErrors(['gambar' => 'Semua gambar harus JPG / PNG'])
+                        ->withInput();
+                }
 
                 $path = $file->store('paket', 'public');
 
@@ -73,6 +81,8 @@ class PaketController extends Controller
                 ]);
             }
         }
+
+
 
         return redirect()->route('admin.paket.index')
             ->with('success', 'Paket berhasil ditambahkan!');

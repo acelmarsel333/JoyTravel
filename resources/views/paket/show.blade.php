@@ -55,11 +55,6 @@
                         </span>
                     </div>
 
-                    <div class="mb-4">
-                        <strong>Durasi:</strong>
-                        {{ $paket->durasi ?? '3 Hari 2 Malam' }}
-                    </div>
-
                     <!-- DESKRIPSI -->
                     <div class="mb-4">
                         <h5>Deskripsi</h5>

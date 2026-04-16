@@ -20,7 +20,7 @@
                 <div class="card-body p-4 p-md-5">
 
                     <p class="mb-4">
-                        Silakan hubungi <strong>JoyTravel</strong> melalui informasi di bawah ini.
+                        Silakan hubungi <strong><img src="{{ asset('image/logo panjang 2.png') }}" alt="JoyTravel" width="60" height="20px"></strong> melalui informasi di bawah ini.
                         Tim kami akan dengan senang hati membantu Anda.
                     </p>
 

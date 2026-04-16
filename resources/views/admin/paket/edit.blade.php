@@ -8,27 +8,42 @@
     </div>
 
     <div class="card-body">
+
+        {{-- ERROR --}}
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('admin.paket.update', $paket->id) }}"
               method="POST"
               enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
+            {{-- NAMA --}}
             <div class="mb-3">
                 <label>Nama Paket</label>
                 <input type="text" name="nama_paket" class="form-control"
-                       value="{{ $paket->nama_paket }}">
+                       value="{{ old('nama_paket', $paket->nama_paket) }}" required>
             </div>
 
+            {{-- HARGA --}}
             <div class="mb-3">
                 <label>Harga</label>
                 <input type="number" name="harga" class="form-control"
-                       value="{{ $paket->harga }}">
+                       value="{{ old('harga', $paket->harga) }}" required>
             </div>
 
+            {{-- DESKRIPSI --}}
             <div class="mb-3">
                 <label>Deskripsi</label>
-                <textarea name="deskripsi" class="form-control">{{ $paket->deskripsi }}</textarea>
+                <textarea name="deskripsi" class="form-control" required>{{ old('deskripsi', $paket->deskripsi) }}</textarea>
             </div>
 
             {{-- GAMBAR SAAT INI --}}
@@ -45,7 +60,7 @@
                 </div>
             @endif
 
-            {{-- UPLOAD --}}
+            {{-- TAMBAH GAMBAR --}}
             <div class="mb-3">
                 <label>Tambah Gambar</label>
                 <input type="file" name="gambar[]" multiple class="form-control">
@@ -56,7 +71,7 @@
             <div class="mb-3">
                 <label>Map Embed</label>
                 <textarea name="map_embed[0]" class="form-control"
-                          placeholder="<iframe src='...'></iframe>">{{ $paket->galeri->first()->map_embed ?? '' }}</textarea>
+                          placeholder="<iframe src='...'></iframe>">{{ old('map_embed.0', $paket->galeri->first()->map_embed ?? '') }}</textarea>
             </div>
 
             <button class="btn btn-success">Update</button>
